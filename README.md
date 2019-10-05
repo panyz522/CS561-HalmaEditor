@@ -28,7 +28,7 @@ _Tested on Windows and Mac_
 
 * Click `Open` to open a input file, whose path can be changed.
 * Once a input file is opened, the editor will monitor the file changes and update automatically.
-* To open a new editor to track different input.txt file by clicking `Open New Editor` on the left.
+* To open a new editor to track different input.txt file, click `Open New Editor` on the left.
 * To untrack the file and open a new file, reenter a path and click `Open`.
 * To untrack the file without opening a new file, just close the broswer tab.
 * To save as a new input file, just reenter a path and click `Save as New`.
