@@ -1,5 +1,65 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.sec {
+    margin-top: 20px;
+}
+
+.halma-tile {
+    width: 40px;
+    height: 40px;
+    background-color: rgb(175, 240, 255);
+    text-align: center;
+    align-content: center;
+    position: relative
+}
+
+.halma-piece {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 80%;
+    height: 80%;
+}
+
+.halma-whitep {
+    background-color: white;
+    border: 1px solid rgb(82, 82, 82);
+}
+
+.halma-blackp {
+    background-color: black;
+    border: 1px solid rgb(179, 179, 179);
+}
+
+.halma-clearp {
+    background-color: rgb(175, 240, 255);
+    border: 1px solid black;
+}
+
+.halma-brushselect {
+    width: 150px;
+    height: 50px;
+    background-color: white;
+    text-align: center;
+    align-content: center;
+    position: relative
+}
+
+.halma-brush {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+
+.halma-brush-chosen {
+    box-shadow: 0 0 4px 1px rgba(0, 255, 33, 0.90);
+}
+
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

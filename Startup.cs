@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using HalmaEditor.Data;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using HalmaEditor.Data;
 
 namespace HalmaEditor
 {
@@ -16,7 +11,7 @@ namespace HalmaEditor
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -27,7 +22,9 @@ namespace HalmaEditor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddOptions();
+            services.Configure<BoardOptions>(this.Configuration.GetSection("BoardManager"));
+            services.AddScoped<BoardManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
