@@ -4,7 +4,7 @@ An editor for editing boards of Halma game.
 
 ## Download
 
-...
+[Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
 
 ## Start Instruction
 
