@@ -7,6 +7,8 @@ An editor for editing boards of Halma game.
 * Developed by Blazor(C#) from Microsoft.
 * Welcome to leave issues and pull requests.
 
+![demo](https://drive.google.com/uc?id=17KCGxVDV2CPpe1U3Bv-_8g9O0Yc_quQG)
+
 ## Download
 
 [Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
