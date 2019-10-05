@@ -2,17 +2,23 @@
 
 An editor for editing boards of Halma game.
 
+* Automatically update file and editor synchronously and bidirectionally.
+* Support multi-file monitoring.
+* Developed by Blazor(C#) from Microsoft.
+* Welcome to leave issues and pull requests.
+
 ## Download
 
 [Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
+_Tested on Windows and Mac_
 
 ## Start Instruction
 
 1. Unzip folder
 1. Edit `appsettings.json`, change the value of default input.txt file path in the settings `"BoardManager": "FilePath": "<your default input path>"`
-1. Run `HalmaEditor.exe` or other executable according to your operating system
-1. Wait a second and look at the second line of the output on the prompt.
-    Open the URL with your favorate broswer. The URL should be like `http://localhost:5000`
+1. Run `HalmaEditor.exe` or other executable according to your operating system. Mac os may need permissions.
+1. Wait a second and look for a line starting with **Now listening on**.
+    Open the URL with your favorate broswer. Or just open [http://localhost:5000](http://localhost:5000)
 
 ## Editor Usage
 
