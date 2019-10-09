@@ -9,11 +9,17 @@ namespace HalmaEditor.Data
 {
     public class BoardManager : IDisposable
     {
+        public event EventHandler RunnerTrigger;
+
         public BoardOptions Options { get; set; }
+
+        public BoardHub Hub { get; set; }
 
         public string FilePath { get; set; }
 
         public string LinkedFilePath { get; set; }
+
+        public int LinkedFileCacheHash { get; set; }
 
         public bool IsSingleMode { get; set; } = true;
 
@@ -42,10 +48,11 @@ namespace HalmaEditor.Data
             }
         }
 
-        public BoardManager(IOptionsMonitor<BoardOptions> options)
+        public BoardManager(IOptionsMonitor<BoardOptions> options, BoardHub hub)
         {
             this.Options = options.CurrentValue;
             this.FilePath = options.CurrentValue.FilePath;
+            this.Hub = hub;
             for (int i = 0; i < 16; i++)
             {
                 for (int j = 0; j < 16; j++)
@@ -126,6 +133,7 @@ namespace HalmaEditor.Data
             {
                 return false;
             }
+            this.RunnerTrigger?.Invoke(this, EventArgs.Empty);
             return true;
         }
 
@@ -144,17 +152,25 @@ namespace HalmaEditor.Data
             this.fileWatcher.EnableRaisingEvents = true;
 
             this.LinkedFilePath = this.FilePath;
+            this.Hub.Register(this);
         }
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
             Task.Delay(500).Wait();
+
+            if (this.LinkedFileCacheHash == File.ReadAllText(this.LinkedFilePath).GetHashCode())
+            {
+                return;
+            }
             this.OpenInput(this.LinkedFilePath);
+            this.RunnerTrigger?.Invoke(sender, e);
         }
 
         public void DelinkFile()
         {
             this.fileWatcher?.Dispose();
+            this.Hub.Unregister(this.LinkedFilePath);
         }
 
         public void Dispose()

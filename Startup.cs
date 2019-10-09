@@ -26,6 +26,8 @@ namespace HalmaEditor
             services.Configure<BoardOptions>(this.Configuration.GetSection("BoardManager"));
             services.AddScoped<BoardManager>();
             services.AddScoped<OutputManager>();
+            services.AddScoped<Runner>();
+            services.AddSingleton<BoardHub>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

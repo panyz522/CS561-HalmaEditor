@@ -1,0 +1,101 @@
+﻿@page "/runner"
+@using HalmaEditor.Data
+@using System.IO;
+@inject Runner runner
+
+<h1>Runner</h1>
+
+<h3>Bind a linked board to start auto runner</h3>
+<div class="row">
+    <div class="col-sm-10">
+        @if (runner.BoundBoardManager == null)
+        {
+            <div class="btn-group-vertical">
+                @foreach (var board in runner.Hub.boardManagers.Keys)
+                {
+                    <button type="button" class="btn btn-light text-left" @onclick="@((e) => {runner.BindBoardManager(board);} )">
+                        @board
+                    </button>
+                }
+            </div>
+        }
+        else
+        {
+            <button type="button" class="btn btn-link text-left" @onclick="@((e) => {runner.UnbindBoardManager();} )">
+                Bound with @runner.BoundBoardManager.LinkedFilePath - Click to unbind
+            </button>
+        }
+    </div>
+</div>
+
+<br/>
+
+<div class="row">
+    <div class="col-sm-10">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-primary" disabled="@(IsRunning)" type="button" @onclick="Run">
+                    Run
+                </button>
+            </div>
+            <input type="text" class="form-control" placeholder="Command" @bind="Cmd" />
+            <input type="text" class="form-control" placeholder="Working Directory" @bind="WordDir" />
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-10">
+        <pre><code>@Output</code></pre>
+    </div>
+</div>
+
+@code {
+    public string Cmd;
+
+    public string WordDir;
+
+    public string Output;
+
+    public bool IsRunning = false;
+
+    public string test;
+
+    void OnRunTriggered(object sender, EventArgs e)
+    {
+        Task.Run(async () => { await Run();});
+    }
+
+    async Task Run()
+    {
+        if (IsRunning)
+        {
+            return;
+        }
+        Output = "[ Running... ]";
+        IsRunning = true;
+        var res = await runner.Run(this.Cmd, this.WordDir);
+        if (res.Item2)
+        {
+            Output = res.Item1;
+        }
+        else
+        {
+            Output = "!! Time Out !!\n" + res.Item1;
+        }
+        IsRunning = false;
+    }
+
+    protected override void OnInitialized()
+    {
+        Task.Run(() =>
+        {
+            while (true)
+            {
+                Task.Delay(1000).Wait();
+                this.InvokeAsync(this.StateHasChanged);
+            }
+        });
+        runner.RunnerTrigger += this.OnRunTriggered;
+    }
+}
