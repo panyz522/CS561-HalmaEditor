@@ -13,6 +13,19 @@
     position: relative
 }
 
+.halma-tileindex {
+    background-color: rgb(243, 253, 255);
+    text-align:center;
+}
+
+.halma-tileindextext {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .halma-piece {
     position: absolute;
     top: 0;

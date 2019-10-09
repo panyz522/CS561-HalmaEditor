@@ -1,12 +1,19 @@
 ﻿@using HalmaEditor.Data
 @using System.IO;
 @inject BoardManager boardMgr
+@inject OutputManager outMgr
 
 <div class="input-group mb-3">
     <div class="input-group-prepend">
         <span class="input-group-text" id="basic-addon1">Input File Path</span>
     </div>
     <input type="text" class="form-control" placeholder="Path" @bind="boardMgr.FilePath" />
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Output File Path</span>
+    </div>
+    <input type="text" class="form-control" placeholder="Path" @bind="outMgr.FilePath" />
 </div>
 
 @if (warning != null)
@@ -17,13 +24,16 @@
 }
 
 <div class="row">
-    <div class="col-sm-12">Synced with File: @boardMgr.LinkedFilePath</div>
+    <div class="col-sm-12">Synced with Input File: @boardMgr.LinkedFilePath</div>
+    <div class="col-sm-12">Synced with Output File: @outMgr.LinkedFilePath</div>
 </div>
 
 <div class="sec">
     <div class="btn-group" role="group" aria-label="Basic example">
-        <button class="btn btn-primary" @onclick="OpenNew">Open</button>
-        <button class="btn btn-primary" @onclick="CreateNew">Save as New</button>
+        <button class="btn btn-primary" @onclick="OpenNew">Link input.txt</button>
+        <button class="btn btn-primary" @onclick="CreateNew">Save As</button>
+        <button class="btn btn-info" @onclick="LinkOutput">Link output.txt</button>
+        <button class="btn btn-info" @onclick="ApplyOutput">Apply output.txt</button>
     </div>
 </div>
 
@@ -62,7 +72,7 @@
 <div class="row">
     <div class="col-sm-12">
         <span style="color: @((count.Item1 == 19) ? "green" : "red")">White: @count.Item1 pc</span>
-        <br/>
+        <br />
         <span style="color: @((count.Item2 == 19) ? "green" : "red")">Black: @count.Item2 pc</span>
     </div>
 </div>
@@ -70,12 +80,32 @@
 <p>@test</p>
 
 <table class="sec" @onkeydown="@((e) => test=e.Key )">
+    <tr>
+        <td>
+            <div class="halma-tile halma-tileindex">
+            </div>
+        </td>
+        @for (int j = 0; j < 16; j++)
+        {
+            var tilej = j;
+            <td>
+                <div class="halma-tile halma-tileindex">
+                    <div class="halma-tileindextext">@tilej</div>
+                </div>
+            </td>
+        }
+    </tr>
     @for (int i = 0; i < 16; i++)
     {
+        var tilei = i;
         <tr>
+            <td>
+                <div class="halma-tile halma-tileindex">
+                    <div class="halma-tileindextext">@tilei</div>
+                </div>
+            </td>
             @for (int j = 0; j < 16; j++)
             {
-                var tilei = i;
                 var tilej = j;
                 <td>
                     <div class="halma-tile" @onclick="@((e) => SetTile(tilei, tilej))">
@@ -145,6 +175,41 @@
         this.count = boardMgr.Count;
     }
 
+    void LinkOutput()
+    {
+        outMgr.DelinkFile();
+        outMgr.LinkedFilePath = boardMgr.FilePath;
+        outMgr.LinkFile();
+    }
+
+    void ApplyOutput()
+    {
+        var path = outMgr.GetStartEndPath();
+        if (path == null)
+        {
+            warning = "Cannot load output.txt";
+            return;
+        }
+        
+        var st = path.Value.Start;
+        var ed = path.Value.End;
+        if (boardMgr.Tiles[st.Item1, st.Item2] == 0)
+        {
+            warning = $"Moving from an empty tile: row {st.Item1} col {st.Item2}";
+            return;
+        }
+        if (boardMgr.Tiles[ed.Item1, ed.Item2] != 0)
+        {
+            warning = $"Moving to an occupied tile: row {ed.Item1} col {ed.Item2}";
+            return;
+        }
+        warning = null;
+        boardMgr.Tiles[ed.Item1, ed.Item2] = boardMgr.Tiles[st.Item1, st.Item2];
+        boardMgr.Tiles[st.Item1, st.Item2] = 0;
+        boardMgr.IsWhite = !boardMgr.IsWhite;
+        OnChangeData();
+    }
+
     void Save()
     {
         boardMgr.DelinkFile();
@@ -181,6 +246,12 @@
             }
         });
         this.count = boardMgr.Count;
+        this.outMgr.OutputChanged += OnOutoutChanged;
+    }
+
+    void OnOutoutChanged(object _, EventArgs e)
+    {
+        ApplyOutput();
     }
 
     void OnChangeData()
