@@ -2,9 +2,10 @@
 
 An editor for editing boards of Halma game.
 
-* Automatically update file and editor synchronously and bidirectionally.
+* Automatically update input.txt and editor bidirectionally.
+* Automatically apply output.txt.
 * Support multi-file monitoring.
-* Developed by Blazor(C#) from Microsoft.
+* Developed with Blazor(.net core 3.0) from Microsoft.
 * Welcome to leave issues and pull requests.
 
 ![demo](https://drive.google.com/uc?id=17KCGxVDV2CPpe1U3Bv-_8g9O0Yc_quQG)
@@ -12,12 +13,18 @@ An editor for editing boards of Halma game.
 ## Download
 
 [Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
-_Tested on Windows and Mac_
+
+_Tested on Windows 10, Mac, and Ubuntu_
 
 ## Start Instruction
 
 1. Unzip folder
-1. Edit `appsettings.json`, change the value of default input.txt file path in the settings `"BoardManager": "FilePath": "<your default input path>"`
+1. Edit `appsettings.json`, change the default paths of input.txt and output.txt in the settings.
+
+    `"BoardManager": "FilePath": "<your default input path>"`
+
+    `"BoardManager": "OutputFilePath": "<your default input path>"`
+
 1. Run `HalmaEditor.exe` or other executable according to your operating system. Mac os may need permissions.
 1. Wait a second and look for a line starting with **Now listening on**.
     Open the URL with your favorate broswer. Or just open [http://localhost:5000](http://localhost:5000)
