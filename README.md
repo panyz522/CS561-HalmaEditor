@@ -23,7 +23,7 @@ _Tested on Windows 10, Mac, and Ubuntu_
 
     `"BoardManager": "FilePath": "<your default input path>"`
 
-    `"BoardManager": "OutputFilePath": "<your default input path>"`
+    `"BoardManager": "OutputFilePath": "<your default output path>"`
 
 1. Run `HalmaEditor.exe` or other executable according to your operating system. Mac os may need permissions.
 1. Wait a second and look for a line starting with **Now listening on**.
