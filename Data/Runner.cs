@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,6 +12,10 @@ namespace HalmaEditor.Data
     {
         public event EventHandler RunnerTrigger;
 
+        public string CmdString { get; set; }
+
+        public string WordDir { get; set; }
+
         public BoardHub Hub { get; set; }
 
         public ILogger Log { get; set; }
@@ -19,8 +24,10 @@ namespace HalmaEditor.Data
 
         public BoardManager BoundBoardManager { get; set; }
 
-        public Runner(BoardHub hub, ILogger<Runner> log)
+        public Runner(BoardHub hub, ILogger<Runner> log, IOptionsMonitor<BoardOptions> options)
         {
+            this.CmdString = options.CurrentValue.Cmd;
+            this.WordDir = options.CurrentValue.WorkDir;
             this.Hub = hub;
             this.Log = log;
         }
@@ -48,17 +55,15 @@ namespace HalmaEditor.Data
             this.BoundBoardManager = null;
         }
 
-        public async Task<(string, bool)> Run(string cmd, string workdir)
+        public async Task<(string, bool)> Run()
         {
-            Process process;
-
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                Cmd(cmd, workdir);
+                Cmd(this.CmdString, this.WordDir);
             }
             else
             {
-                Bash(cmd, workdir);
+                Bash(this.CmdString, this.WordDir);
             }
 
             this.process.Start();

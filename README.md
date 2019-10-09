@@ -6,17 +6,19 @@ Please leave a star if you find it helpful :blush:
 
 * Automatically update input.txt and editor bidirectionally.
 * Automatically apply output.txt.
+* Automatically run the game using your program.
 * Support multi-file monitoring.
 * Developed with Blazor(.net core 3.0) from Microsoft.
 * Welcome to leave issues and pull requests.
 
 ![demo](https://drive.google.com/uc?id=17KCGxVDV2CPpe1U3Bv-_8g9O0Yc_quQG)
+![runnerdemo](https://drive.google.com/uc?id=1_fUj57pVqFXBliRIaFBiDA2NvJnEhZX9)
 
 ## Download
 
 [Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
 
-_Tested on Windows 10, Mac, and Ubuntu_
+_Available for Windows 10, Mac, and Linux_
 
 ## Start Instruction
 
@@ -33,19 +35,29 @@ _Tested on Windows 10, Mac, and Ubuntu_
 
 ## Editor Usage
 
-### File Operation
+### File Operations
 
-* Click `Open` to open a input file, whose path can be changed.
+* Click `Link input.txt` to open a input file, whose path can be changed.
 * Once a input file is opened, the editor will monitor the file changes and update automatically.
-* To open a new editor to track different input.txt file, click `Open New Editor` on the left.
-* To untrack the file and open a new file, reenter a path and click `Open`.
+* To open a new editor to track different input.txt file, click `Open New Editor` on the Nav Panel.
+* To untrack the file and open a new file, reenter a path and click `Link input.txt`.
 * To untrack the file without opening a new file, just close the broswer tab.
-* To save as a new input file, just reenter a path and click `Save as New`.
+* To save as a new input file, just reenter a path and click `Save As`.
+* To monitor and automatically apply the output.txt to the current board, enter the **Output File Path** and click `Link output.txt`.
+* To manually apply the output.txt, click `Apply output.txt`
 
-### Board Operation
+### Board Operations
 
 * Click `Single/Game` button to change mode.
 * Click `Black/White` button to change color.
 * Change the value of input `Left Time` to change the time value.
 * Click __white or black__ square to change brush color, __cyan__ square to choose eraser.
 * Click any tile on the broad to toggle the tile with current brush.
+
+### Runner Operations
+
+* To open a new runner, click `Open New Runner` on the left Nav Panel.
+
+* Enter the **Command** and **Working Directory** and click `Run` to manually run your program.
+
+* Choose one of the linked boards to bind to that board, so when the board is updated, the program runner can be automatically triggered.

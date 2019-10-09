@@ -38,8 +38,8 @@
                     Run
                 </button>
             </div>
-            <input type="text" class="form-control" placeholder="Command" @bind="Cmd" />
-            <input type="text" class="form-control" placeholder="Working Directory" @bind="WordDir" />
+            <input type="text" class="form-control" placeholder="Command" @bind="runner.CmdString" />
+            <input type="text" class="form-control" placeholder="Working Directory" @bind="runner.WordDir" />
         </div>
     </div>
 </div>
@@ -51,10 +51,6 @@
 </div>
 
 @code {
-    public string Cmd;
-
-    public string WordDir;
-
     public string Output;
 
     public bool IsRunning = false;
@@ -74,7 +70,7 @@
         }
         Output = "[ Running... ]";
         IsRunning = true;
-        var res = await runner.Run(this.Cmd, this.WordDir);
+        var res = await runner.Run();
         if (res.Item2)
         {
             Output = res.Item1;
