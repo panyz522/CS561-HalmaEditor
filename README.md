@@ -1,6 +1,8 @@
 # CS561-HalmaEditor
 
-An editor for editing boards of Halma game.
+A board editor for Halma game.
+
+Please leave a star if you find it helpful :blush:
 
 * Automatically update input.txt and editor bidirectionally.
 * Automatically apply output.txt.
