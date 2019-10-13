@@ -1,19 +1,25 @@
-﻿@using HalmaEditor.Data
+﻿@page "/"
+@using HalmaEditor.Data
 @using System.IO;
 @inject BoardManager boardMgr
 @inject OutputManager outMgr
 
+<h1>Halma Board Editor</h1>
+<h6>By Yongzhen Pan</h6>
+
 <div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">Input File Path</span>
-    </div>
     <input type="text" class="form-control" placeholder="Path" @bind="boardMgr.FilePath" />
+    <div class="input-group-append">
+        <button class="btn btn-primary" @onclick="OpenNew">Link input.txt</button>
+        <button class="btn btn-primary" @onclick="CreateNew">Save As</button>
+    </div>
 </div>
 <div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">Output File Path</span>
-    </div>
     <input type="text" class="form-control" placeholder="Path" @bind="outMgr.FilePath" />
+    <div class="input-group-append">
+        <button class="btn btn-info" @onclick="ToggleLinkOutput">@((outMgr.LinkedFilePath == null) ? "Link" : "Unlink") output.txt</button>
+        <button class="btn btn-info" @onclick="ApplyOutput">Apply</button>
+    </div>
 </div>
 
 @if (warning != null)
@@ -26,15 +32,6 @@
 <div class="row">
     <div class="col-sm-12">Synced with Input File: @boardMgr.LinkedFilePath</div>
     <div class="col-sm-12">Synced with Output File: @outMgr.LinkedFilePath</div>
-</div>
-
-<div class="sec">
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button class="btn btn-primary" @onclick="OpenNew">Link input.txt</button>
-        <button class="btn btn-primary" @onclick="CreateNew">Save As</button>
-        <button class="btn btn-info" @onclick="LinkOutput">Link output.txt</button>
-        <button class="btn btn-info" @onclick="ApplyOutput">Apply output.txt</button>
-    </div>
 </div>
 
 <div class="sec">
@@ -175,9 +172,14 @@
         this.count = boardMgr.Count;
     }
 
-    void LinkOutput()
+    void ToggleLinkOutput()
     {
         outMgr.DelinkFile();
+        if (outMgr.LinkedFilePath != null)
+        {
+            outMgr.LinkedFilePath = null;
+            return;
+        }
         outMgr.LinkedFilePath = boardMgr.FilePath;
         outMgr.LinkFile();
     }
@@ -190,7 +192,7 @@
             warning = "Cannot load output.txt";
             return;
         }
-        
+
         var st = path.Value.Start;
         var ed = path.Value.End;
         if (boardMgr.Tiles[st.Item1, st.Item2] == 0)
@@ -207,6 +209,11 @@
         boardMgr.Tiles[ed.Item1, ed.Item2] = boardMgr.Tiles[st.Item1, st.Item2];
         boardMgr.Tiles[st.Item1, st.Item2] = 0;
         boardMgr.IsWhite = !boardMgr.IsWhite;
+        if (!boardMgr.IsSingleMode)
+        {
+            boardMgr.TimeLeft -= (float)boardMgr.TimeUsedInRunner;
+            boardMgr.TimeUsedInRunner = 0;
+        }
         OnChangeData();
     }
 

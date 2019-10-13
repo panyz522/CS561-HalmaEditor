@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HalmaEditor.Data
 {
-    public class OutputManager
+    public class OutputManager : IDisposable
     {
         public string FilePath { get; set; }
 
@@ -79,6 +79,11 @@ namespace HalmaEditor.Data
         public void DelinkFile()
         {
             this.fileWatcher?.Dispose();
+        }
+
+        public void Dispose()
+        {
+            this.DelinkFile();
         }
     }
 

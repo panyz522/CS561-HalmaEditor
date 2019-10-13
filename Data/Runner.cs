@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,15 +54,15 @@ namespace HalmaEditor.Data
             this.BoundBoardManager = null;
         }
 
-        public async Task<(string, bool)> Run()
+        public async Task<(string, bool, double)> Run()
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                Cmd(this.CmdString, this.WordDir);
+                this.Cmd(this.CmdString, this.WordDir);
             }
             else
             {
-                Bash(this.CmdString, this.WordDir);
+                this.Bash(this.CmdString, this.WordDir);
             }
 
             this.process.Start();
@@ -85,15 +84,18 @@ namespace HalmaEditor.Data
                 this.process.Kill(true);
             }
             string result = await this.process.StandardOutput.ReadToEndAsync();
+            var usedTime = this.process.UserProcessorTime.TotalSeconds;
             this.process.Dispose();
-            return (result, finished);
+            if (this.BoundBoardManager != null)
+                this.BoundBoardManager.TimeUsedInRunner = usedTime;
+            return (result, finished, usedTime);
         }
 
         public static Task WaitForExitAsync(Process process, CancellationToken cancellationToken = default)
         {
             var tcs = new TaskCompletionSource<object>();
             process.EnableRaisingEvents = true;
-            process.Exited += (sender, args) => tcs.TrySetResult(null);
+            process.Exited += (sender, args) => { try { tcs.TrySetResult(null); } catch { } };
             if (cancellationToken != default)
                 cancellationToken.Register(tcs.SetCanceled);
 
@@ -137,10 +139,14 @@ namespace HalmaEditor.Data
         public void Dispose()
         {
             this.UnbindBoardManager();
-            if (!this.process?.HasExited ?? true)
+            try
             {
-                this.process.Kill(true);
+                if (!(this.process?.HasExited ?? true))
+                {
+                    this.process.Kill(true);
+                }
             }
+            catch { }
         }
     }
 }

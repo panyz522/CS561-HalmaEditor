@@ -27,6 +27,8 @@ namespace HalmaEditor.Data
 
         public float TimeLeft { get; set; } = 1.0f;
 
+        public double TimeUsedInRunner { get; set; }
+
         public int[,] Tiles { get; set; } = new int[16, 16];
 
         private FileSystemWatcher fileWatcher;
@@ -159,10 +161,12 @@ namespace HalmaEditor.Data
         {
             Task.Delay(500).Wait();
 
-            if (this.LinkedFileCacheHash == File.ReadAllText(this.LinkedFilePath).GetHashCode())
+            var hash = File.ReadAllText(this.LinkedFilePath).GetHashCode();
+            if (this.LinkedFileCacheHash == hash)
             {
                 return;
             }
+            this.LinkedFileCacheHash = hash;
             this.OpenInput(this.LinkedFilePath);
             this.RunnerTrigger?.Invoke(sender, e);
         }

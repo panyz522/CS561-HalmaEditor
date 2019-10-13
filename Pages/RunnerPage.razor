@@ -59,7 +59,7 @@
 
     void OnRunTriggered(object sender, EventArgs e)
     {
-        Task.Run(async () => { await Run();});
+        Task.Run(Run);
     }
 
     async Task Run()
@@ -73,7 +73,7 @@
         var res = await runner.Run();
         if (res.Item2)
         {
-            Output = res.Item1;
+            Output = $"[ Time Used: {res.Item3} ]\n" + res.Item1;
         }
         else
         {
