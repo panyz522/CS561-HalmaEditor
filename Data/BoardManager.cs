@@ -13,6 +13,8 @@ namespace HalmaEditor.Data
 
         public BoardOptions Options { get; set; }
 
+        public TitleData Title { get; set; }
+
         public BoardHub Hub { get; set; }
 
         public string FilePath { get; set; }
@@ -50,8 +52,9 @@ namespace HalmaEditor.Data
             }
         }
 
-        public BoardManager(IOptionsMonitor<BoardOptions> options, BoardHub hub)
+        public BoardManager(IOptionsMonitor<BoardOptions> options, BoardHub hub, TitleData title)
         {
+            this.Title = title;
             this.Options = options.CurrentValue;
             this.FilePath = options.CurrentValue.FilePath;
             this.Hub = hub;
@@ -154,6 +157,7 @@ namespace HalmaEditor.Data
             this.fileWatcher.EnableRaisingEvents = true;
 
             this.LinkedFilePath = this.FilePath;
+            this.Title.Title = Path.GetFileName(this.LinkedFilePath);
             this.Hub.Register(this);
         }
 

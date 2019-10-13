@@ -1,0 +1,17 @@
+﻿@using HalmaEditor.Data
+@inject TitleData data
+<title>@data.Title</title>
+@code {
+
+    protected override void OnInitialized()
+    {
+        Task.Run(() =>
+        {
+            while (true)
+            {
+                Task.Delay(1000).Wait();
+                this.InvokeAsync(this.StateHasChanged);
+            }
+        });
+    }
+}

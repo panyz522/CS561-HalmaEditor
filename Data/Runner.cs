@@ -11,6 +11,8 @@ namespace HalmaEditor.Data
     {
         public event EventHandler RunnerTrigger;
 
+        public TitleData Title { get; set; }
+
         public string CmdString { get; set; }
 
         public string WordDir { get; set; }
@@ -23,12 +25,14 @@ namespace HalmaEditor.Data
 
         public BoardManager BoundBoardManager { get; set; }
 
-        public Runner(BoardHub hub, ILogger<Runner> log, IOptionsMonitor<BoardOptions> options)
+        public Runner(BoardHub hub, ILogger<Runner> log, IOptionsMonitor<BoardOptions> options, TitleData title)
         {
             this.CmdString = options.CurrentValue.Cmd;
             this.WordDir = options.CurrentValue.WorkDir;
             this.Hub = hub;
             this.Log = log;
+            this.Title = title;
+            title.Title = "Game Runner";
         }
 
         public void OnBoardTriggered(object sender, EventArgs e)

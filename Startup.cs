@@ -24,6 +24,7 @@ namespace HalmaEditor
             services.AddServerSideBlazor();
             services.AddOptions();
             services.Configure<BoardOptions>(this.Configuration.GetSection("BoardManager"));
+            services.AddScoped<TitleData>();
             services.AddScoped<BoardManager>();
             services.AddScoped<OutputManager>();
             services.AddScoped<Runner>();
