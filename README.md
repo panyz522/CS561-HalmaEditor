@@ -29,7 +29,10 @@ _Available for Windows 10, Mac, and Linux_
 
     `"BoardManager": "OutputFilePath": "<your default output path>"`
 
-1. Run `HalmaEditor.exe` or other executable according to your operating system. Mac os may need permissions.
+1. Run `HalmaEditor.exe` or other executable according to your operating system. 
+    
+    **NOTE:** MacOS may need permissions. Please try `sudo spctl --master-disable` to disable [Gatekeeper](https://en.wikipedia.org/wiki/Gatekeeper_(macOS)).
+    
 1. Wait a second and look for a line starting with **Now listening on**.
     Open the URL with your favorate broswer. Or just open [http://localhost:5000](http://localhost:5000)
 
