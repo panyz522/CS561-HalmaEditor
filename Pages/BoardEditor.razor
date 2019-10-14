@@ -105,7 +105,8 @@
             {
                 var tilej = j;
                 <td>
-                    <div class="halma-tile" @onclick="@((e) => SetTile(tilei, tilej))">
+                    <div class="halma-tile @(boardMgr.LeftUps.Contains((tilei, tilej)) || boardMgr.RightDowns.Contains((tilei, tilej)) ? "halma-tilecamp" : "")"
+                         @onclick="@((e) => SetTile(tilei, tilej))">
                         @if (boardMgr.Tiles[i, j] == 1)
                         {
                             <div class="halma-piece halma-whitep"></div>

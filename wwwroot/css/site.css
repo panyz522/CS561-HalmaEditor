@@ -71,6 +71,10 @@
     box-shadow: 0 0 4px 1px rgba(0, 255, 33, 0.90);
 }
 
+.halma-tilecamp {
+    background-color: rgb(0, 207, 255);
+}
+
 
 
 html, body {
