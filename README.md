@@ -16,7 +16,7 @@ Please leave a star if you find it helpful :blush:
 
 ## Download
 
-[v1.0 on Google Drive](https://drive.google.com/open?id=1fk8teay6F7fJIZLwGEOB2oT7On7UnP0d)
+[Github Release](https://github.com/panyz522/CS561-HalmaEditor/releases/)
 
 _Available for Windows 10, Mac, and Linux_
 
