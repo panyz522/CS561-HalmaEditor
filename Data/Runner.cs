@@ -47,14 +47,14 @@ namespace HalmaEditor.Data
                 return;
             }
             this.BoundBoardManager = this.Hub.boardManagers[path];
-            this.BoundBoardManager.RunnerTrigger += this.OnBoardTriggered;
+            this.BoundBoardManager.InputFileChanged += this.OnBoardTriggered;
         }
 
         public void UnbindBoardManager()
         {
             if (this.BoundBoardManager == null)
                 return;
-            this.BoundBoardManager.RunnerTrigger -= this.OnBoardTriggered;
+            this.BoundBoardManager.InputFileChanged -= this.OnBoardTriggered;
             this.BoundBoardManager = null;
         }
 

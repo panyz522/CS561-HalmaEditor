@@ -5,13 +5,6 @@
 
     protected override void OnInitialized()
     {
-        Task.Run(() =>
-        {
-            while (true)
-            {
-                Task.Delay(1000).Wait();
-                this.InvokeAsync(this.StateHasChanged);
-            }
-        });
+        data.TitleUpdated += (sender, e) => this.InvokeAsync(this.StateHasChanged);
     }
 }
