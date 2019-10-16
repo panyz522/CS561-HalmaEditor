@@ -12,7 +12,6 @@ Please leave a star if you find it helpful :blush:
 * Welcome to leave issues and pull requests.
 
 ![demo](https://drive.google.com/uc?id=17KCGxVDV2CPpe1U3Bv-_8g9O0Yc_quQG)
-![runnerdemo](https://drive.google.com/uc?id=1_fUj57pVqFXBliRIaFBiDA2NvJnEhZX9)
 
 ## Download
 
