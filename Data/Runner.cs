@@ -69,7 +69,16 @@ namespace HalmaEditor.Data
                 this.Bash(this.CmdString, this.WordDir);
             }
 
-            this.process.Start();
+            try
+            {
+                this.process.Start();
+            }
+            catch (Exception e)
+            {
+                this.Log.LogError(e.ToString());
+                return ($"Process start error! Please check command and workdir.\n{e.Message}", true, 0);
+            }
+
             bool finished = true;
             using (var cts = new CancellationTokenSource((int)((this.BoundBoardManager?.TimeLeft ?? 10f) * 1000))) // Default to wait 10s
             {
@@ -80,16 +89,22 @@ namespace HalmaEditor.Data
                 catch (TaskCanceledException)
                 {
                     this.Log.LogInformation("Execution Cancelled.");
-                    finished = false;
+                    finished = true;
                 }
             }
+
             if (!finished)
             {
                 this.process.Kill(true);
             }
             string result = await this.process.StandardOutput.ReadToEndAsync();
-            var usedTime = this.process.UserProcessorTime.TotalSeconds;
+
+            double usedTime = 0;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                usedTime = this.process.UserProcessorTime.TotalSeconds;
+
             this.process.Dispose();
+
             if (this.BoundBoardManager != null)
                 this.BoundBoardManager.TimeUsedInRunner = usedTime;
             return (result, finished, usedTime);
