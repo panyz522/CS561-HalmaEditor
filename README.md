@@ -19,7 +19,7 @@ Please leave a star if you find it helpful :blush:
 
 _Available for Windows 10, Mac, and Linux_
 
-## Start Instruction
+## Getting Started
 
 1. Unzip folder
 1. Edit `appsettings.json`, change the default paths of input.txt and output.txt in the settings.
