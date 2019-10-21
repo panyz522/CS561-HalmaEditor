@@ -9,13 +9,17 @@ namespace HalmaEditor.Data
 {
     public class Runner : IDisposable
     {
-        public event EventHandler RunnerTrigger;
+        public event EventHandler<RunnerTriggeredEventArgs> RunnerTrigger;
 
         public TitleData Title { get; set; }
 
-        public string CmdString { get; set; }
+        public string P1CmdString { get; set; }
 
-        public string WordDir { get; set; }
+        public string P1WorkDir { get; set; }
+
+        public string P2CmdString { get; set; }
+
+        public string P2WorkDir { get; set; }
 
         public BoardHub Hub { get; set; }
 
@@ -27,15 +31,17 @@ namespace HalmaEditor.Data
 
         public Runner(BoardHub hub, ILogger<Runner> log, IOptionsMonitor<BoardOptions> options, TitleData title)
         {
-            this.CmdString = options.CurrentValue.Cmd;
-            this.WordDir = options.CurrentValue.WorkDir;
+            this.P1CmdString = options.CurrentValue.Player1Cmd;
+            this.P1WorkDir = options.CurrentValue.Player1WorkDir;
+            this.P2CmdString = options.CurrentValue.Player2Cmd;
+            this.P2WorkDir = options.CurrentValue.Player2WorkDir;
             this.Hub = hub;
             this.Log = log;
             this.Title = title;
             title.Title = "Game Runner";
         }
 
-        public void OnBoardTriggered(object sender, EventArgs e)
+        public void OnBoardTriggered(object sender, RunnerTriggeredEventArgs e)
         {
             RunnerTrigger?.Invoke(sender, e);
         }
@@ -58,15 +64,17 @@ namespace HalmaEditor.Data
             this.BoundBoardManager = null;
         }
 
-        public async Task<(string, bool, double)> Run()
+        public async Task<(string, bool, double)> Run(int player)
         {
+            string cmdStr = player == 1 ? this.P1CmdString : this.P1CmdString;
+            string workDir = player == 1 ? this.P1WorkDir : this.P2WorkDir;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                this.Cmd(this.CmdString, this.WordDir);
+                this.Cmd(cmdStr, workDir);
             }
             else
             {
-                this.Bash(this.CmdString, this.WordDir);
+                this.Bash(cmdStr, workDir);
             }
 
             try

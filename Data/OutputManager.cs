@@ -66,8 +66,23 @@ namespace HalmaEditor.Data
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
-            Task.Delay(500).Wait();
-            int cache = File.ReadAllText(this.LinkedFilePath).GetHashCode();
+            int cache = this.cacheHash;
+            int trycnt = 0;
+            while (true)
+            {
+                Task.Delay(500).Wait();
+                try
+                {
+                    cache = File.ReadAllText(this.LinkedFilePath).GetHashCode();
+                }
+                catch (IOException)
+                {
+                    if (trycnt > 3) return;
+                    trycnt++;
+                    continue;
+                }
+                break;
+            }
             if (cache == this.cacheHash)
             {
                 return;

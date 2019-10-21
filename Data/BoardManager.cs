@@ -12,7 +12,7 @@ namespace HalmaEditor.Data
         public HashSet<(int, int)> LeftUps = new HashSet<(int, int)>() { (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (2, 0), (2, 1), (2, 2), (2, 3), (3, 0), (3, 1), (3, 2), (4, 0), (4, 1) };
         public HashSet<(int, int)> RightDowns = new HashSet<(int, int)>() { (11, 15), (11, 14), (12, 15), (12, 14), (12, 13), (13, 15), (13, 14), (13, 13), (13, 12), (14, 15), (14, 14), (14, 13), (14, 12), (14, 11), (15, 15), (15, 14), (15, 13), (15, 12), (15, 11) };
 
-        public event EventHandler InputFileChanged;
+        public event EventHandler<RunnerTriggeredEventArgs> InputFileChanged;
 
         public BoardOptions Options { get; set; }
 
@@ -141,7 +141,7 @@ namespace HalmaEditor.Data
             {
                 return false;
             }
-            this.InputFileChanged?.Invoke(this, EventArgs.Empty);
+            this.InputFileChanged?.Invoke(this, new RunnerTriggeredEventArgs { NextPlayer = this.IsWhite ? 1 : 2});
             return true;
         }
 
@@ -175,7 +175,7 @@ namespace HalmaEditor.Data
             }
             this.LinkedFileCacheHash = hash;
             this.OpenInput(this.LinkedFilePath);
-            this.InputFileChanged?.Invoke(sender, e);
+            this.InputFileChanged?.Invoke(sender, new RunnerTriggeredEventArgs { NextPlayer = this.IsWhite ? 1 : 2 });
         }
 
         public void DelinkFile()

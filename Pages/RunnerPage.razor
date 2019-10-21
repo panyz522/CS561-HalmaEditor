@@ -34,12 +34,26 @@
     <div class="col-sm-10">
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <button class="btn btn-primary" disabled="@(IsRunning)" type="button" @onclick="Run">
-                    Run
+                <button class="btn btn-primary" disabled="@(IsRunning)" type="button" @onclick="@(()=>Run(1))">
+                    Run White(P1) Round
                 </button>
             </div>
-            <input type="text" class="form-control" placeholder="Command" @bind="runner.CmdString" />
-            <input type="text" class="form-control" placeholder="Working Directory" @bind="runner.WordDir" />
+            <input type="text" class="form-control" placeholder="Command" @bind="runner.P1CmdString" />
+            <input type="text" class="form-control" placeholder="Working Directory" @bind="runner.P1WorkDir" />
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-10">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-primary" disabled="@(IsRunning)" type="button" @onclick="@(()=>Run(2))">
+                    Run Black(P2) Round
+                </button>
+            </div>
+            <input type="text" class="form-control" placeholder="Command" @bind="runner.P2CmdString" />
+            <input type="text" class="form-control" placeholder="Working Directory" @bind="runner.P2WorkDir" />
         </div>
     </div>
 </div>
@@ -57,27 +71,33 @@
 
     public string test;
 
-    void OnRunTriggered(object sender, EventArgs e)
+    void OnRunTriggered(object sender, RunnerTriggeredEventArgs e)
     {
-        Task.Run(Run);
+        Task.Run(async () => await Run(e.NextPlayer));
     }
 
-    async Task Run()
+    async Task Run(int player)
     {
         if (IsRunning)
         {
+            Output = $"[!! Cannot Run while Running !!]";
             return;
         }
-        Output = "[ Running... ]";
+        if (player == 1 && !runner.BoundBoardManager.IsWhite || player == 2 && runner.BoundBoardManager.IsWhite)
+        {
+            Output = $"[!! The player should be the same as the one on input.txt !!]";
+            return;
+        }
+        Output = $"[ Player {player} Running... ]";
         IsRunning = true;
-        var res = await runner.Run();
+        var res = await runner.Run(player);
         if (res.Item2)
         {
-            Output = $"[ Time Used: {res.Item3} ]\n" + res.Item1;
+            Output = $"[ Player {player} Time Used: {res.Item3} ]\n" + res.Item1;
         }
         else
         {
-            Output = "!! Time Out !!\n" + res.Item1;
+            Output = $"[!! Player {player} Time Out !!]\n" + res.Item1;
         }
         IsRunning = false;
     }

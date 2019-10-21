@@ -4,7 +4,9 @@
     {
         public string FilePath { get; set; }
         public string OutputFilePath { get; set; }
-        public string WorkDir { get; set; }
-        public string Cmd { get; set; }
+        public string Player1WorkDir { get; set; }
+        public string Player1Cmd { get; set; }
+        public string Player2WorkDir { get; set; }
+        public string Player2Cmd { get; set; }
     }
 }
