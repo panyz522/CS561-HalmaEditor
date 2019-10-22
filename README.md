@@ -59,7 +59,6 @@ _Available for Windows 10, Mac, and Linux_
 ### Runner Operations
 
 * To open a new runner, click `Open New Runner` on the left Nav Panel.
-
 * Enter the **Command** and **Working Directory** and click `Run` to manually run your program.
-
 * Choose one of the linked boards to bind to that board, so when the board is updated, the program runner can be automatically triggered.
+    * The chosen board must bind to an input.txt and an output.txt to make runner work.
