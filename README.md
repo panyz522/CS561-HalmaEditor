@@ -28,7 +28,7 @@ _Available for Windows 10, Mac, and Linux_
 
     `"BoardManager": "OutputFilePath": "<your default output path>"`
 
-1. Run `HalmaEditor.exe` or other executable according to your operating system. 
+1. Run `HalmaEditor.exe`(Windows) or `HalmaEditor`(MacOS & Linux) according to your operating system. 
     
     **NOTE:** MacOS may need permissions. Please try `sudo spctl --master-disable` to disable [Gatekeeper](https://en.wikipedia.org/wiki/Gatekeeper_(macOS)).
     
