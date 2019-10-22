@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,12 +30,18 @@ namespace HalmaEditor.Data
 
         public BoardManager BoundBoardManager { get; set; }
 
+        public RunnerLog P1Log { get; set; }
+
+        public RunnerLog P2Log { get; set; }
+
         public Runner(BoardHub hub, ILogger<Runner> log, IOptionsMonitor<BoardOptions> options, TitleData title)
         {
             this.P1CmdString = options.CurrentValue.Player1Cmd;
             this.P1WorkDir = options.CurrentValue.Player1WorkDir;
             this.P2CmdString = options.CurrentValue.Player2Cmd;
             this.P2WorkDir = options.CurrentValue.Player2WorkDir;
+            this.P1Log = new RunnerLog(options.CurrentValue.Player1LogFilePath);
+            this.P2Log = new RunnerLog(options.CurrentValue.Player2LogFilePath);
             this.Hub = hub;
             this.Log = log;
             this.Title = title;
@@ -66,7 +73,11 @@ namespace HalmaEditor.Data
 
         public async Task<(string, bool, double)> Run(int player)
         {
-            string cmdStr = player == 1 ? this.P1CmdString : this.P1CmdString;
+            if ((this.BoundBoardManager?.TimeLeft ?? 1f) <= 0)
+            {
+                return ("No time left!", true, 0);
+            }
+            string cmdStr = player == 1 ? this.P1CmdString : this.P2CmdString;
             string workDir = player == 1 ? this.P1WorkDir : this.P2WorkDir;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
@@ -77,6 +88,7 @@ namespace HalmaEditor.Data
                 this.Bash(cmdStr, workDir);
             }
 
+            DateTime startTime = DateTime.Now;
             try
             {
                 this.process.Start();
@@ -100,18 +112,17 @@ namespace HalmaEditor.Data
                     finished = true;
                 }
             }
+            double usedTime = (DateTime.Now - startTime).TotalSeconds;
 
             if (!finished)
             {
                 this.process.Kill(true);
             }
             string result = await this.process.StandardOutput.ReadToEndAsync();
-
-            double usedTime = 0;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                usedTime = this.process.UserProcessorTime.TotalSeconds;
-
             this.process.Dispose();
+
+            if (player == 1) { this.P1Log.AppendLog(result, usedTime); }
+            else { this.P2Log.AppendLog(result, usedTime); }
 
             if (this.BoundBoardManager != null)
                 this.BoundBoardManager.TimeUsedInRunner = usedTime;
@@ -174,6 +185,42 @@ namespace HalmaEditor.Data
                 }
             }
             catch { }
+        }
+    }
+
+    public class RunnerLog
+    {
+        public string FileName { get; set; }
+
+        public RunnerLog(string fileName)
+        {
+            this.FileName = fileName;
+        }
+
+        public bool AppendLog(string log, double time)
+        {
+            try
+            {
+                File.AppendAllText(this.FileName, $"=== {DateTime.Now:HH:mm:ss.fff} === Time Elapsed: {time:F} s ===\n" + log + "\n");
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool DeleteLogFile()
+        {
+            try
+            {
+                File.Delete(this.FileName);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -8,5 +8,7 @@
         public string Player1Cmd { get; set; }
         public string Player2WorkDir { get; set; }
         public string Player2Cmd { get; set; }
+        public string Player1LogFilePath { get; set; }
+        public string Player2LogFilePath { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +13,18 @@ namespace HalmaEditor.Data
 
         public string LinkedFilePath { get; set; }
 
+        private ILogger Log { get; set; }
+
         public event EventHandler OutputChanged;
 
         private FileSystemWatcher fileWatcher;
 
         private int cacheHash;
 
-        public OutputManager(IOptionsMonitor<BoardOptions> options)
+        public OutputManager(IOptionsMonitor<BoardOptions> options, ILogger<OutputManager> logger)
         {
             this.FilePath = options.CurrentValue.OutputFilePath;
+            this.Log = logger;
         }
 
         public Move? GetStartEndPath()
@@ -29,11 +32,13 @@ namespace HalmaEditor.Data
             try
             {
                 var lines = File.ReadAllLines(this.FilePath);
-                var paths = lines.Where(s => (s.StartsWith("J") || s.StartsWith("E"))).Select(s => {
+                var paths = lines.Where(s => (s.StartsWith("J") || s.StartsWith("E"))).Select(s =>
+                {
                     var items = s.Split(" ");
                     var st = items[1].Split(",").Select(s => int.Parse(s)).ToArray();
                     var ed = items[2].Split(",").Select(s => int.Parse(s)).ToArray();
-                    return new Move() {
+                    return new Move()
+                    {
                         IsJump = items[0] == "J",
                         Start = (st[1], st[0]),
                         End = (ed[1], ed[0])
@@ -64,6 +69,11 @@ namespace HalmaEditor.Data
             this.LinkedFilePath = this.FilePath;
         }
 
+        /// <summary>
+        /// Read File and check hash (make sure it's different)
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The FileSystemEventArgs.</param>
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
             int cache = this.cacheHash;
@@ -75,9 +85,14 @@ namespace HalmaEditor.Data
                 {
                     cache = File.ReadAllText(this.LinkedFilePath).GetHashCode();
                 }
-                catch (IOException)
+                catch (Exception)
                 {
-                    if (trycnt > 3) return;
+                    if (trycnt > 3)
+                    {
+                        Log.LogWarning($"Read output failed {trycnt} times. Aborted");
+                        return;
+                    }
+                    this.Log.LogInformation($"Read output failed {trycnt} times. Retrying...");
                     trycnt++;
                     continue;
                 }
