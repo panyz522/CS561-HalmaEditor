@@ -71,11 +71,20 @@ namespace HalmaEditor.Data
             this.BoundBoardManager = null;
         }
 
-        public async Task<(string, bool, double)> Run(int player)
+        /// <summary>
+        /// Run for player and return result.
+        /// </summary>
+        /// <param name="player">The player number.</param>
+        /// <returns>(stdout, finished, time, exitcode, stderr)</returns>
+        public async Task<RunnerResult> Run(int player)
         {
             if ((this.BoundBoardManager?.TimeLeft ?? 1f) <= 0)
             {
-                return ("No time left!", true, 0);
+                return new RunnerResult
+                {
+                    Timeout = false,
+                    StdOut = "No Time Left, check input.txt"
+                };
             }
             string cmdStr = player == 1 ? this.P1CmdString : this.P2CmdString;
             string workDir = player == 1 ? this.P1WorkDir : this.P2WorkDir;
@@ -96,7 +105,11 @@ namespace HalmaEditor.Data
             catch (Exception e)
             {
                 this.Log.LogError(e.ToString());
-                return ($"Process start error! Please check command and workdir.\n{e.Message}", true, 0);
+                return new RunnerResult
+                {
+                    StdOut = $"Process start error! Please check command and workdir.\n{e.Message}",
+                    Timeout = false
+                };
             }
 
             bool finished = true;
@@ -118,15 +131,35 @@ namespace HalmaEditor.Data
             {
                 this.process.Kill(true);
             }
-            string result = await this.process.StandardOutput.ReadToEndAsync();
+            string stdOut = await this.process.StandardOutput.ReadToEndAsync();
+            string stdErr = await this.process.StandardError.ReadToEndAsync();
+            int code = this.process.ExitCode;
             this.process.Dispose();
 
-            if (player == 1) { this.P1Log.AppendLog(result, usedTime); }
-            else { this.P2Log.AppendLog(result, usedTime); }
+            if (code != 0)
+            {
+                string errorLog = $"Error:\n{stdErr}\nOutput:\n{stdOut}\n";
+                if (player == 1) { this.P1Log.AppendLog(errorLog, usedTime); }
+                else { this.P2Log.AppendLog(errorLog, usedTime); }
+                return new RunnerResult
+                {
+                    ExitCode = code,
+                    StdErr = stdErr,
+                    StdOut = stdOut
+                };
+            }
+
+            if (player == 1) { this.P1Log.AppendLog(stdOut, usedTime); }
+            else { this.P2Log.AppendLog(stdOut, usedTime); }
 
             if (this.BoundBoardManager != null)
                 this.BoundBoardManager.TimeUsedInRunner = usedTime;
-            return (result, finished, usedTime);
+            return new RunnerResult
+            {
+                StdOut = stdOut,
+                TimeInSecond = usedTime,
+                Timeout = !finished
+            };
         }
 
         public static Task WaitForExitAsync(Process process, CancellationToken cancellationToken = default)
@@ -152,6 +185,7 @@ namespace HalmaEditor.Data
                     FileName = "/bin/bash",
                     Arguments = $"-c \"{escapedArgs}\"",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }
@@ -168,6 +202,7 @@ namespace HalmaEditor.Data
                     FileName = "cmd.exe",
                     Arguments = $"/C \"{cmd}\"",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }
@@ -186,6 +221,15 @@ namespace HalmaEditor.Data
             }
             catch { }
         }
+    }
+
+    public struct RunnerResult
+    {
+        public string StdOut;
+        public string StdErr;
+        public int ExitCode;
+        public double TimeInSecond;
+        public bool Timeout;
     }
 
     public class RunnerLog
