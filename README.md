@@ -15,7 +15,7 @@ Please leave a star if you find it helpful :blush:
 
 ## Download
 
-[Github Release](https://github.com/panyz522/CS561-HalmaEditor/releases/)
+[Click here to download](https://github.com/panyz522/CS561-HalmaEditor/releases/)
 
 _Available for Windows 10, Mac, and Linux_
 
