@@ -27,11 +27,13 @@ namespace HalmaEditor.Data
         public event EventHandler ReleaseCheckFinished;
 
         public ReleaseInstaller Installer { get; set; }
+        public SettingsUpdater SettingsUpdater { get; }
 
-        public BoardHub(ReleaseChecker releaseChecker, ILogger<BoardHub> logger, ReleaseInstaller installer)
+        public BoardHub(ReleaseChecker releaseChecker, ILogger<BoardHub> logger, ReleaseInstaller installer, SettingsUpdater settingsUpdater)
         {
             this.ReleaseChecker = releaseChecker;
             this.Installer = installer;
+            this.SettingsUpdater = settingsUpdater;
             this.Log = logger;
             Task.Run(async () =>
             {
@@ -58,6 +60,8 @@ namespace HalmaEditor.Data
 
         public async Task<bool> InstallUpdateAsync()
         {
+            const string appSettings = "appsettings.json";
+
             if (this.NewerRelease == null)
             {
                 this.Log.LogWarning("No newer version found.");
@@ -112,6 +116,21 @@ namespace HalmaEditor.Data
                 this.Log.LogWarning($"Couldn't rename folder: {e.ToString()}");
                 return false;
             }
+
+            // Update settings 
+            try
+            {
+                string setOld = File.ReadAllText(Path.Combine(curDir, appSettings));
+                string setTemplate = File.ReadAllText(Path.Combine(targetArchiveDir, appSettings));
+                string setNew = SettingsUpdater.UpdateSettings(setOld, setTemplate);
+                File.WriteAllText(Path.Combine(targetArchiveDir, appSettings), setNew);
+            }
+            catch (Exception e)
+            {
+                this.Log.LogWarning($"Couldn't update {appSettings}: {e.ToString()}");
+                return false;
+            }
+
 
             return true;
         }

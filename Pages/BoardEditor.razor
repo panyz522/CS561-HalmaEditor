@@ -30,7 +30,7 @@
                     Folder Path: @(boardMgr.Hub.NewVersionDir)
                 </p>
                 <p>
-                    Settings File: @(Path.Combine(boardMgr.Hub.NewVersionDir, "appsettings.json"))
+                    Settings File: @(Path.Combine(boardMgr.Hub.NewVersionDir, "appsettings.json")) (appsettings old properties are kept, new properties may need to be updated)
                 </p>
                 <p>
                     Executable: @(Path.Combine(boardMgr.Hub.NewVersionDir, nameof(HalmaEditor) + (Environment.OSVersion.Platform == PlatformID.Win32NT ? ".exe" : "")))
@@ -306,16 +306,9 @@
         DownloadStarted = true;
         await Task.Run(async () =>
         {
-            if (await boardMgr.Hub.InstallUpdateAsync())
-            {
-                ReleaseFilesPrepared = true;
-                await this.InvokeAsync(this.StateHasChanged);
-            }
-            else
-            {
-                ReleaseFilesPrepared = false;
-                await this.InvokeAsync(this.StateHasChanged);
-            }
+            ReleaseFilesFailed = !await boardMgr.Hub.InstallUpdateAsync();
+            ReleaseFilesPrepared = true;
+            await this.InvokeAsync(this.StateHasChanged);
         });
     }
 
