@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using HalmaEditor.Tools;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +36,8 @@ namespace HalmaEditor.Data
 
         public double TimeUsedInRunner { get; set; }
 
+        public ILogger Log { get; set; }
+
         public int[,] Tiles { get; set; } = new int[16, 16];
 
         private FileSystemWatcher fileWatcher;
@@ -55,12 +59,13 @@ namespace HalmaEditor.Data
             }
         }
 
-        public BoardManager(IOptionsMonitor<BoardOptions> options, BoardHub hub, TitleData title)
+        public BoardManager(IOptionsMonitor<BoardOptions> options, BoardHub hub, TitleData title, ILogger<BoardManager> logger)
         {
             this.Title = title;
             this.Options = options.CurrentValue;
             this.FilePath = options.CurrentValue.FilePath;
             this.Hub = hub;
+            this.Log = logger;
             for (int i = 0; i < 16; i++)
             {
                 for (int j = 0; j < 16; j++)
@@ -141,7 +146,7 @@ namespace HalmaEditor.Data
             {
                 return false;
             }
-            this.InputFileChanged?.Invoke(this, new RunnerTriggeredEventArgs { NextPlayer = this.IsWhite ? 1 : 2});
+            this.InputFileChanged?.Invoke(this, new RunnerTriggeredEventArgs { NextPlayer = this.IsWhite ? 1 : 2 });
             return true;
         }
 

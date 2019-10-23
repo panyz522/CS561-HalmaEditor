@@ -1,4 +1,5 @@
 using HalmaEditor.Data;
+using HalmaEditor.Tools;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ namespace HalmaEditor
             services.AddScoped<OutputManager>();
             services.AddScoped<Runner>();
             services.AddSingleton<BoardHub>();
+            services.AddSingleton<ReleaseChecker>();
+            services.AddSingleton<ReleaseInstaller>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

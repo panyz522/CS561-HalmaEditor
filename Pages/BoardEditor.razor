@@ -4,8 +4,58 @@
 @inject BoardManager boardMgr
 @inject OutputManager outMgr
 
-<h1>Halma Board Editor</h1>
+<h1>Halma Board Editor - @Program.VerStr</h1>
 <h6>By Yongzhen Pan</h6>
+<div class="alert alert-primary" hidden="@(boardMgr.Hub.ReleaseCheckDone && boardMgr.Hub.NewerRelease == null)" role="alert">
+    @if (boardMgr.Hub.NewerRelease == null)
+    {
+        <span>Checking Update...</span>
+    }
+    else
+    {
+        if (ReleaseFilesPrepared)
+        {
+            if (ReleaseFilesFailed)
+            {
+                <span>
+                    Download Failed, please check console.
+                </span>
+            }
+            else
+            {
+                <p>
+                    Newer version v @boardMgr.Hub.NewerRelease.Version has been downloaded.
+                </p>
+                <p>
+                    Folder Path: @(boardMgr.Hub.NewVersionDir)
+                </p>
+                <p>
+                    Settings File: @(Path.Combine(boardMgr.Hub.NewVersionDir, "appsettings.json"))
+                </p>
+                <p>
+                    Executable: @(Path.Combine(boardMgr.Hub.NewVersionDir, nameof(HalmaEditor) + (Environment.OSVersion.Platform == PlatformID.Win32NT ? ".exe" : "")))
+                </p>
+            }
+        }
+        else
+        {
+            @if (DownloadStarted)
+            {
+                <span>
+                    Downloading...
+                </span>
+            }
+            else
+            {
+                <span>
+                    Newer Version Found: v
+                    @boardMgr.Hub.NewerRelease.Version
+                    <a class="alert-link" href="#" @onclick="PrepareReleaseFilesAsync">Click to Update</a>
+                </span>
+            }
+        }
+    }
+</div>
 
 <div class="input-group mb-3">
     <input type="text" class="form-control" placeholder="Path" @bind="boardMgr.FilePath" />
@@ -131,6 +181,14 @@
 
     public string warning;
 
+    public string UpdateCheckerStr;
+
+    public bool ReleaseFilesPrepared = false;
+
+    public bool ReleaseFilesFailed = false;
+
+    public bool DownloadStarted = false;
+
     void SetTile(int i, int j)
     {
         if (BrushType > 0)
@@ -243,11 +301,30 @@
         boardMgr.LinkFile();
     }
 
+    async Task PrepareReleaseFilesAsync()
+    {
+        DownloadStarted = true;
+        await Task.Run(async () =>
+        {
+            if (await boardMgr.Hub.InstallUpdateAsync())
+            {
+                ReleaseFilesPrepared = true;
+                await this.InvokeAsync(this.StateHasChanged);
+            }
+            else
+            {
+                ReleaseFilesPrepared = false;
+                await this.InvokeAsync(this.StateHasChanged);
+            }
+        });
+    }
+
     protected override void OnInitialized()
     {
         this.boardMgr.InputFileChanged += (sender, e) => { this.count = boardMgr.Count; this.InvokeAsync(this.StateHasChanged); };
         this.count = boardMgr.Count;
         this.outMgr.OutputChanged += OnOutoutChanged;
+        this.boardMgr.Hub.ReleaseCheckFinished += (sender, e) => this.InvokeAsync(this.StateHasChanged);
     }
 
     void OnOutoutChanged(object _, EventArgs e)
