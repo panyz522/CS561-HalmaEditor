@@ -125,7 +125,7 @@ namespace HalmaEditor.Data
                     finished = true;
                 }
             }
-            double usedTime = (DateTime.Now - startTime).TotalSeconds;
+            double usedTime = 0; //(DateTime.Now - startTime).TotalSeconds;
 
             if (!finished)
             {

@@ -15,7 +15,7 @@ namespace HalmaEditor
 {
     public class Program
     {
-        public const string VerStr = "v1.5";
+        public const string VerStr = "v1.5.1";
         public const string Repo = "CS561-HalmaEditor";
         public const string Owner = "panyz522";
         public static readonly Version Version = Version.Parse(VerStr.Substring(1));
