@@ -57,7 +57,7 @@
 <div class="row">
     <div class="col-sm-10">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Command" @bind="runner.P1Log.FileName" />
+            <input type="text" class="form-control" placeholder="Player 1 Log Path" @bind="runner.P1Log.FileName" />
             <div class="input-group-append">
                 <button class="btn btn-warning" type="button" @onclick="@(()=>runner.P1Log.DeleteLogFile())">
                     Delete Player 1 Log File
@@ -70,7 +70,7 @@
 <div class="row">
     <div class="col-sm-10">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Command" @bind="runner.P2Log.FileName" />
+            <input type="text" class="form-control" placeholder="Player 2 Log Path" @bind="runner.P2Log.FileName" />
             <div class="input-group-append">
                 <button class="btn btn-warning" type="button" @onclick="@(()=>runner.P2Log.DeleteLogFile())">
                     Delete Player 2 Log File

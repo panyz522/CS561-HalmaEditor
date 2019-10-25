@@ -125,7 +125,7 @@ namespace HalmaEditor.Data
                     finished = true;
                 }
             }
-            double usedTime = 0; //(DateTime.Now - startTime).TotalSeconds;
+            double usedTime = (DateTime.Now - startTime).TotalSeconds;
 
             if (!finished)
             {
@@ -153,7 +153,7 @@ namespace HalmaEditor.Data
             else { this.P2Log.AppendLog(stdOut, usedTime); }
 
             if (this.BoundBoardManager != null)
-                this.BoundBoardManager.TimeUsedInRunner = usedTime;
+                this.BoundBoardManager.TimeUsedInRunner = 0;
             return new RunnerResult
             {
                 StdOut = stdOut,
